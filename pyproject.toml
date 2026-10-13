@@ -1,0 +1,9 @@
+[project]
+name = "treeid"
+version = "0.1.0"
+description = "Recovering occluded apple-tree leader structure from RGB-D images (MMA3001 project)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
