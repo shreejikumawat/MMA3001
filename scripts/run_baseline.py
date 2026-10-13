@@ -33,7 +33,8 @@ def unpack(xi):
 def main():
     out = Path("results/runs/baseline")
     out.mkdir(parents=True, exist_ok=True)
-    d = np.load("data/cache_256.npz")
+    # Materialise arrays once: indexing an NpzFile re-decompresses the whole array.
+    d = dict(np.load("data/cache_256.npz"))
     tr, va, te = split_by_row(d["row"])
     # Tune on every second training tree (deterministic) to bound runtime; the
     # validation rows are not needed because the baseline has no early stopping.

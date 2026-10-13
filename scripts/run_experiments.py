@@ -60,7 +60,7 @@ def main(argv=None):
 
     out = Path("results/runs") / a.name
     out.mkdir(parents=True, exist_ok=True)
-    d = np.load(f"data/cache_{a.size}.npz")
+    d = dict(np.load(f"data/cache_{a.size}.npz"))  # materialise once
     x = d["x"].astype(np.float32)
     if not a.depth_input:
         x = x[:, :3]
@@ -89,7 +89,7 @@ def main(argv=None):
     infer_s = (time.perf_counter() - t0) / te.sum()
     # Score every model at the native 256x256 mask resolution so that runs trained
     # at different input sizes are compared on the same footing.
-    d256 = np.load("data/cache_256.npz")
+    d256 = {k: v for k, v in np.load("data/cache_256.npz").items() if k != "x"}
     rows = []
     for i, p in zip(np.flatnonzero(te), prob_te):
         p256 = cv2.resize(p.astype(np.float32), (256, 256), interpolation=cv2.INTER_LINEAR)
