@@ -1,0 +1,7 @@
+# Raw dataset (750 MB, redistributed by the teaching team; see data/README.md)
+data/raw/
+data/*.npz
+__pycache__/
+*.pyc
+.pytest_cache/
+results/runs/*/test_prob.npz
