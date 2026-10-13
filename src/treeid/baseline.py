@@ -86,7 +86,8 @@ def predict(rgb01: np.ndarray, near: np.ndarray, valid: np.ndarray,
     s = (params.w_ridge * ridge + params.w_near * near_g) / (params.w_ridge + params.w_near)
     mask = s > params.thresh
     if params.min_size > 0:
-        mask = remove_small_objects(mask, min_size=params.min_size)
+        # scikit-image >= 0.26 removes objects of size <= max_size.
+        mask = remove_small_objects(mask, max_size=params.min_size - 1)
     return mask
 
 

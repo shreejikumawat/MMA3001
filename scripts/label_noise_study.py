@@ -32,7 +32,7 @@ TOLS = [2, 4, 8]
 
 
 def main():
-    d = np.load("data/cache_256.npz")
+    d = {k: v for k, v in np.load("data/cache_256.npz").items() if k != "x"}
     _, _, te = split_by_row(d["row"])
     rows = []
     for k in SHIFTS:

@@ -1,6 +1,6 @@
 numpy>=1.26
 scipy>=1.11
-scikit-image>=0.22
+scikit-image>=0.26
 opencv-python-headless>=4.8
 pandas>=2.0
 matplotlib>=3.8
