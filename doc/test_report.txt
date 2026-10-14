@@ -1,0 +1,65 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/claude/mma3001-treeid
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collecting ... collected 53 items
+
+tests/test_align.py::test_xcorr_matches_direct_sum PASSED                [  1%]
+tests/test_align.py::test_recovers_integer_shift[0-0] PASSED             [  3%]
+tests/test_align.py::test_recovers_integer_shift[0-17] PASSED            [  5%]
+tests/test_align.py::test_recovers_integer_shift[0--23] PASSED           [  7%]
+tests/test_align.py::test_recovers_integer_shift[4--9] PASSED            [  9%]
+tests/test_align.py::test_subpixel_refinement_improves_estimate PASSED   [ 11%]
+tests/test_align.py::test_apply_shift_roundtrip_preserves_area PASSED    [ 13%]
+tests/test_align.py::test_shape_mismatch_raises PASSED                   [ 15%]
+tests/test_io_preprocess.py::test_parse_standard_name PASSED             [ 16%]
+tests/test_io_preprocess.py::test_parse_row4_renamed_file PASSED         [ 18%]
+tests/test_io_preprocess.py::test_parse_rejects_foreign_names PASSED     [ 20%]
+tests/test_io_preprocess.py::test_discover_and_load PASSED               [ 22%]
+tests/test_io_preprocess.py::test_discover_missing_root PASSED           [ 24%]
+tests/test_io_preprocess.py::test_load_bad_season PASSED                 [ 26%]
+tests/test_io_preprocess.py::test_crop_resize_shapes_and_nearest_for_masks PASSED [ 28%]
+tests/test_io_preprocess.py::test_resize_mask_identity PASSED            [ 30%]
+tests/test_io_preprocess.py::test_excess_green_ordering PASSED           [ 32%]
+tests/test_io_preprocess.py::test_depth_foreground_rank_and_missing PASSED [ 33%]
+tests/test_io_preprocess.py::test_make_input_channels_and_validation PASSED [ 35%]
+tests/test_io_preprocess.py::test_split_is_disjoint_and_grouped PASSED   [ 37%]
+tests/test_metrics.py::test_iou_dice_known_values PASSED                 [ 39%]
+tests/test_metrics.py::test_empty_conventions PASSED                     [ 41%]
+tests/test_metrics.py::test_identical_masks_are_perfect PASSED           [ 43%]
+tests/test_metrics.py::test_tolerance_is_a_hard_distance_threshold[2-2-1.0] PASSED [ 45%]
+tests/test_metrics.py::test_tolerance_is_a_hard_distance_threshold[3-2-0.0] PASSED [ 47%]
+tests/test_metrics.py::test_tolerance_is_a_hard_distance_threshold[3-3-1.0] PASSED [ 49%]
+tests/test_metrics.py::test_tolerance_is_a_hard_distance_threshold[10-4-0.0] PASSED [ 50%]
+tests/test_metrics.py::test_iou_collapses_for_thin_offset_but_tolerant_score_does_not PASSED [ 52%]
+tests/test_metrics.py::test_half_recall PASSED                           [ 54%]
+tests/test_metrics.py::test_occluded_recall_nan_when_nothing_occluded PASSED [ 56%]
+tests/test_metrics.py::test_boundary_f1_symmetric PASSED                 [ 58%]
+tests/test_metrics.py::test_shape_mismatch_raises PASSED                 [ 60%]
+tests/test_metrics.py::test_negative_tolerance_raises PASSED             [ 62%]
+tests/test_metrics.py::test_shift_compensated_recovers_known_offset PASSED [ 64%]
+tests/test_metrics.py::test_shift_compensated_never_below_strict PASSED  [ 66%]
+tests/test_model_baseline.py::test_unet_output_shape PASSED              [ 67%]
+tests/test_model_baseline.py::test_flops_hand_count_single_conv PASSED   [ 69%]
+tests/test_model_baseline.py::test_flops_scale_with_pixels PASSED        [ 71%]
+tests/test_model_baseline.py::test_soft_dice_perfect_and_worst PASSED    [ 73%]
+tests/test_model_baseline.py::test_fit_learns_trivial_task_and_is_repeatable PASSED [ 75%]
+tests/test_model_baseline.py::test_fit_rejects_bad_shapes PASSED         [ 77%]
+tests/test_model_baseline.py::test_baseline_finds_near_dark_ridge_and_ignores_leaves PASSED [ 79%]
+tests/test_skeleton.py::test_leader_angle_matches_analytical[0.25] PASSED [ 81%]
+tests/test_skeleton.py::test_leader_angle_matches_analytical[0.5] PASSED [ 83%]
+tests/test_skeleton.py::test_leader_angle_matches_analytical[0.7] PASSED [ 84%]
+tests/test_skeleton.py::test_fork_row_close_to_construction PASSED       [ 86%]
+tests/test_skeleton.py::test_runs_per_row PASSED                         [ 88%]
+tests/test_skeleton.py::test_largest_component_drops_specks PASSED       [ 90%]
+tests/test_skeleton.py::test_no_fork_returns_none PASSED                 [ 92%]
+tests/test_skeleton.py::test_backproject_planar_scene PASSED             [ 94%]
+tests/test_skeleton.py::test_backproject_skips_missing_depth PASSED      [ 96%]
+tests/test_skeleton.py::test_skeleton_fork_is_less_width_biased_than_run_rule PASSED [ 98%]
+tests/test_skeleton.py::test_skeleton_fork_none_for_straight_trunk PASSED [100%]
+
+----- generated xml file: /home/claude/mma3001-treeid/doc/test_report.xml ------
+============================== 53 passed in 6.12s ==============================

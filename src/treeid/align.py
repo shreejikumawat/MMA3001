@@ -1,11 +1,13 @@
 """Registration of the ground-truth masks to the image frame.
 
-Students auditing the dataset reported that the summer ground-truth (GT) masks
-are offset horizontally from the visible trunk by a tree-dependent amount. If
-uncorrected, this offset is *label noise*: a perfect detector would be scored as
-wrong. This module estimates the offset of each mask by maximising the
-cross-correlation between the mask and an independent, label-free estimate of
-where the tree is (the near-field depth foreground), computed with the FFT.
+The data audit found the summer ground-truth (GT) masks offset horizontally from
+the visible trunk by a tree-dependent amount. If uncorrected, this offset is
+*label noise*: a perfect detector would be scored as wrong. This module
+estimates the offset of a mask by maximising its cross-correlation with a
+reference image of where the tree is. Two references were tried (report,
+Section 6): a label-free bark map from colour and ridge cues (too ambiguous to
+use automatically) and the prediction of a trained network
+(``scripts/refine_labels.py``, via :func:`treeid.metrics.shift_compensated_f1`).
 
 Numerical method
 ----------------

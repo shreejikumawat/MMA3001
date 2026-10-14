@@ -21,6 +21,18 @@ Two approaches are compared on orchard rows never seen in training:
   index, four parameters grid-searched), and
 * a compact **U-Net** (0.48 M parameters) with RGB or RGB-D input.
 
+### Headline results (97 trees in 4 held-out orchard rows; mean of 3 seeds)
+
+| Method | Centreline F1 (strict) | Shape F1 (label offset removed) | Median leader-angle error | Inference (1 CPU thread) |
+|---|---|---|---|---|
+| Classical baseline | 0.120 | 0.159 | 31.3° | 111 ms |
+| U-Net RGB-D, 128 px | 0.257 | 0.431 | 6.8° (seed 0) | 17 ms |
+| **U-Net RGB-D, 64 px (selected)** | **0.295** | **0.462** | **4.7°** | **8 ms** |
+
+Strict scores are capped by a dataset problem found in the audit: the supplied
+masks are displaced horizontally from the visible tree (median ≈ 10 px at 256 px).
+See `results/` and the report for the full analysis.
+
 The report (`doc/report.pdf`) gives the problem definition, validation design,
 results, limitations and the AI-use reflection.
 
@@ -40,10 +52,11 @@ results, limitations and the AI-use reflection.
 │   ├── model.py         U-Net and FLOP / arithmetic-intensity estimator
 │   ├── train.py         training loop with early stopping
 │   ├── splits.py        grouped train/val/test split by orchard row
-│   └── skeleton.py      fork height, leader angle, 3-D back-projection
+│   └── skeleton.py      fork (skeleton junction), leader angle, 3-D back-projection
 ├── scripts/             command-line entry points (one per experiment)
 ├── tests/               pytest suite (unit + manufactured-solution tests)
-├── doc/                 HTML API docs (pdoc), test report, AI-use log, report
+├── notebooks/demo.ipynb live demonstration on a held-out tree
+├── doc/                 HTML API docs (pdoc), test report, AI-use log, trunk annotator
 ├── data/                dataset instructions (data not committed)
 └── results/             audit, metrics tables, figures, per-run logs
 ```
@@ -76,8 +89,11 @@ python scripts/label_noise_study.py
 # 3. Classical baseline: tune on training rows, score on test rows (≈5 min)
 python scripts/run_baseline.py
 
-# 4. All U-Net experiments (≈3 h on 2 CPU cores; ≈15 min on a Colab GPU)
-bash scripts/queue.sh
+# 4. All U-Net experiments (≈4 h on 2 CPU cores; ≈20 min on a Colab GPU)
+bash scripts/queue.sh                     # v1: class-weighted loss, raw labels (128/64/256 px, data size)
+python scripts/refine_labels.py           # model-based label re-registration (needs rgbd_s0)
+bash scripts/queue_v2.sh                  # v2: unweighted loss, with and without refined labels
+bash scripts/queue_v3.sh                  # seed repeats at 64 px, RGB vs RGB-D, 256 px
 
 # 5. Tables, statistics and figures
 python scripts/analyse.py
@@ -85,9 +101,13 @@ python scripts/analyse.py
 # 6. Profiling and roofline (run with nothing else using the CPU)
 python scripts/profile_pipeline.py
 
-# 7. Tests and documentation
+# 7. Independent check of trunk position (manual; ~10 min)
+#    open doc/trunk_annotator.html, click each visible trunk, save the CSV to results/
+python scripts/trunk_check.py
+
+# 8. Tests and documentation
 pytest --junitxml=doc/test_report.xml -q | tee doc/test_report.txt
-pdoc src/treeid -o doc/html --docformat numpy
+pdoc src/treeid -o doc/html --docformat google
 ```
 
 Random seeds are fixed in every script; the test rows (5, 10, 15, 20) are fixed in
@@ -104,14 +124,14 @@ from treeid.skeleton import leader_angle
 
 recs, _ = discover("data/raw")
 s = load_sample(recs["R10N05"])
-x = make_input(s["rgb"], s["depth"], size=128, near_is_bright=False)
+x = make_input(s["rgb"], s["depth"], size=64, near_is_bright=False)
 
-model = UNet(in_ch=5); model.load_state_dict(torch.load("results/runs/rgbd_s0/model.pt"))
+model = UNet(in_ch=5); model.load_state_dict(torch.load("results/runs/rgbd_64/model.pt"))
 model.eval()
 with torch.no_grad():
     prob = torch.sigmoid(model(torch.from_numpy(x)[None]))[0, 0].numpy()
 angle, info = leader_angle(prob > 0.5)
-print(f"leader angle {angle:.1f} deg, fork at row {info['fork_row']} of 128")
+print(f"leader angle {angle:.1f} deg, fork at row {info['fork_row']} of 64")
 ```
 
 ### Inputs and outputs
@@ -132,7 +152,8 @@ print(f"leader angle {angle:.1f} deg, fork at row {info['fork_row']} of 128")
 pytest -q
 ```
 
-Tests cover metric definitions against hand-computed values, recovery of known
+53 tests; the latest report is `doc/test_report.txt` (JUnit XML: `doc/test_report.xml`).
+They cover metric definitions against hand-computed values, recovery of known
 shifts by the FFT registration (integer and sub-pixel), analytical V-angles for
 the structure extractor, the FLOP counter against a hand count, repeatability of
 training with a fixed seed, and input validation.
