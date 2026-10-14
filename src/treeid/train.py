@@ -5,8 +5,10 @@ Design decisions (each is tested or reported):
 * **Loss**: binary cross-entropy plus soft-Dice. BCE alone is dominated by the
   ~95% background pixels and converges to "predict nothing"; the Dice term is
   insensitive to class imbalance.
-* **Positive weight**: the BCE ``pos_weight`` equals the background/branch pixel
-  ratio of the training set, computed from training data only (no leakage).
+* **Positive weight**: by default (v1) the BCE ``pos_weight`` equals the
+  background/branch pixel ratio of the training set, computed from training data
+  only. Experiments showed this over-predicts (masks ~3x too wide), so v2 sets it
+  to 1 and relies on the Dice term for class balance.
 * **Early stopping**: training stops when the validation centreline-F1 has not
   improved for ``patience`` epochs; the best checkpoint is restored. The
   validation rows are therefore *used for model selection* and are distinct from
@@ -47,6 +49,9 @@ class TrainConfig:
     threshold: float = 0.5
     flip: bool = True
     threads: int = 2
+    #: BCE weight on branch pixels. ``None`` = background/branch pixel ratio of
+    #: the training set (v1, ~12); 1.0 = unweighted (v2, see report Section 6).
+    pos_weight: float | None = None
 
 
 @dataclass
@@ -123,8 +128,11 @@ def fit(x_tr: np.ndarray, y_tr: np.ndarray, x_va: np.ndarray, y_va: np.ndarray,
     set_seed(cfg.seed)
     model = UNet(x_tr.shape[1], cfg.base, cfg.depth)
     opt = torch.optim.AdamW(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
-    pos_frac = float(y_tr.mean())
-    pos_weight = torch.tensor((1 - pos_frac) / max(pos_frac, 1e-6))
+    if cfg.pos_weight is None:
+        pos_frac = float(y_tr.mean())
+        pos_weight = torch.tensor((1 - pos_frac) / max(pos_frac, 1e-6))
+    else:
+        pos_weight = torch.tensor(float(cfg.pos_weight))
     bce = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     xt = torch.from_numpy(x_tr)
     yt = torch.from_numpy(y_tr[:, None].astype(np.float32))

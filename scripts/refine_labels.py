@@ -14,7 +14,7 @@ Procedure (one round of expectation-maximisation-style label refinement):
    (:func:`treeid.metrics.shift_compensated_f1`).
 3. Accept the shift only if it improves the F1 by at least ``--min-gain``;
    otherwise keep the original label (guards against fitting noise).
-4. Save the shifted labels at 128x128 to ``data/refined_128.npz``.
+4. Save the shifted labels to ``data/refined_128.npz`` and ``data/refined_64.npz``.
 
 Test labels are **never** modified, so the test set remains independent.
 """
@@ -52,6 +52,7 @@ def main(argv=None):
     model = UNet(5, 16, 3)
     model.load_state_dict(torch.load(a.model, map_location="cpu"))
     y_new = d128["y"].copy()
+    y64 = np.stack([resize_mask(g, 64) for g in y256])
     log = []
     for i in np.flatnonzero(tr | va):
         p = predict_proba(model, d128["x"][i: i + 1].astype(np.float32))[0]
@@ -61,10 +62,13 @@ def main(argv=None):
         after, k = shift_compensated_f1(p256, g, tol=4, max_shift=24)
         accepted = (after - before) >= a.min_gain and k != 0
         if accepted:
-            y_new[i] = resize_mask(apply_shift(g, 0, k), 128)
+            g_shift = apply_shift(g, 0, k)
+            y_new[i] = resize_mask(g_shift, 128)
+            y64[i] = resize_mask(g_shift, 64)
         log.append({"tree": str(d128["tree"][i]), "shift_px": int(k), "f1_before": before,
                     "f1_after": after, "accepted": bool(accepted)})
     np.savez_compressed("data/refined_128.npz", y=y_new)
+    np.savez_compressed("data/refined_64.npz", y=y64)
     acc = [r for r in log if r["accepted"]]
     summ = {"n_considered": len(log), "n_accepted": len(acc),
             "median_abs_shift_accepted": float(np.median([abs(r["shift_px"]) for r in acc])) if acc else 0,
