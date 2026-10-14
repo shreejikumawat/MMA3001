@@ -56,6 +56,8 @@ def main(argv=None):
     ap.add_argument("--max-epochs", type=int, default=40)
     ap.add_argument("--patience", type=int, default=8)
     ap.add_argument("--base", type=int, default=16)
+    ap.add_argument("--pos-weight", type=float, default=None,
+                    help="BCE weight on branch pixels (default: background/branch ratio)")
     a = ap.parse_args(argv)
 
     out = Path("results/runs") / a.name
@@ -71,7 +73,8 @@ def main(argv=None):
     if a.train_frac < 1:
         rng = np.random.default_rng(1234)  # fixed: same subset for every seed
         idx_tr = np.sort(rng.choice(idx_tr, int(round(a.train_frac * len(idx_tr))), replace=False))
-    cfg = TrainConfig(base=a.base, seed=a.seed, max_epochs=a.max_epochs, patience=a.patience)
+    cfg = TrainConfig(base=a.base, seed=a.seed, max_epochs=a.max_epochs, patience=a.patience,
+                      pos_weight=a.pos_weight)
     log_f = open(out / "train.log", "w")
 
     def log(msg):
