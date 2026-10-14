@@ -56,11 +56,44 @@ def fork_row(mask: np.ndarray, persist: int = 8) -> int | None:
     return None
 
 
+def fork_point_skeleton(mask: np.ndarray, min_len: int = 20, clear: int = 4
+                        ) -> tuple[int, int] | None:
+    """Fork location from the skeleton's junctions (width-independent).
+
+    :func:`fork_row` finds where a *gap* opens between the leaders, which on a
+    thick mask happens higher than the true split, so its estimate is biased by
+    mask width. Here the mask is reduced to its one-pixel skeleton first; a
+    junction pixel (3 or more skeleton neighbours) is accepted as the fork if,
+    after clearing a ``clear``-pixel neighbourhood around it, the skeleton *above*
+    it falls into at least two pieces each at least ``min_len`` pixels long. The
+    lowest such junction (largest row) is returned.
+
+    Returns:
+        ``(row, col)`` of the fork, or ``None`` if no junction qualifies.
+    """
+    sk = skeletonize(largest_component(mask))
+    if not sk.any():
+        return None
+    nb = ndimage.convolve(sk.astype(np.uint8), np.ones((3, 3), np.uint8), mode="constant") - 1
+    jy, jx = np.nonzero(sk & (nb >= 3))
+    for y, x in sorted(zip(jy, jx), key=lambda t: -t[0]):
+        above = sk.copy()
+        above[y:] = False
+        above[max(0, y - clear): y + 1, max(0, x - clear): x + clear + 1] = False
+        lab, n = ndimage.label(above, structure=np.ones((3, 3)))
+        if n >= 2:
+            sizes = np.sort(ndimage.sum(above, lab, range(1, n + 1)))[::-1]
+            if sizes[1] >= min_len:
+                return int(y), int(x)
+    return None
+
+
 def leader_angle(mask: np.ndarray, persist: int = 8) -> tuple[float, dict] | tuple[None, dict]:
     """Opening angle (degrees) between the two leaders above the fork.
 
-    Skeleton pixels above the fork are split at the fork's column into left and
-    right leaders; each is fitted with ``x = a*y + b`` by least squares and the
+    The fork is located with :func:`fork_point_skeleton` (falling back to
+    :func:`fork_row`). Skeleton pixels above the fork are split at the fork's
+    column into left and right leaders; each is fitted with ``x = a*y + b`` by least squares and the
     angle between the two direction vectors is returned.
 
     Returns:
@@ -68,16 +101,21 @@ def leader_angle(mask: np.ndarray, persist: int = 8) -> tuple[float, dict] | tup
         residuals; ``(None, info)`` if a leader has fewer than 10 skeleton pixels.
     """
     m = largest_component(mask)
-    fy = fork_row(m, persist)
-    info: dict = {"fork_row": fy}
-    if fy is None:
+    fp = fork_point_skeleton(m)
+    if fp is not None:
+        fy, fx = fp
+        method = "skeleton"
+    else:  # fall back to the run-counting rule
+        fy = fork_row(m, persist)
+        fx = float(np.nonzero(m[fy])[0].mean()) if fy is not None and m[fy].any() else None
+        method = "runs"
+    info: dict = {"fork_row": fy, "fork_method": method}
+    if fy is None or fx is None:
         return None, info
     sk = skeletonize(m)
     ys, xs = np.nonzero(sk[:fy])
     if len(xs) < 20:
         return None, info
-    # Column of the fork: mean column of the mask in the fork row.
-    fx = float(np.nonzero(m[fy])[0].mean()) if m[fy].any() else float(xs.mean())
     slopes = []
     for side in (xs < fx, xs >= fx):
         if side.sum() < 10:

@@ -63,3 +63,21 @@ def test_backproject_planar_scene():
 def test_backproject_skips_missing_depth():
     m = np.zeros((50, 50), bool); m[10:40, 30] = True
     assert len(backproject(m, np.zeros((50, 50)), 100, 100, 25, 25)) == 0
+
+
+def test_skeleton_fork_is_less_width_biased_than_run_rule():
+    """Thickening a mask must move the skeleton fork less than the run-count fork."""
+    from scipy import ndimage
+    from treeid.skeleton import fork_point_skeleton
+    thin = v_tree(fork=120, w=4)
+    thick = ndimage.binary_dilation(thin, iterations=8)
+    d_runs = abs(fork_row(thick) - fork_row(thin))
+    d_skel = abs(fork_point_skeleton(thick)[0] - fork_point_skeleton(thin)[0])
+    assert d_skel < d_runs
+    assert abs(fork_point_skeleton(thin)[0] - 120) <= 6
+
+
+def test_skeleton_fork_none_for_straight_trunk():
+    from treeid.skeleton import fork_point_skeleton
+    m = np.zeros((100, 100), bool); m[:, 48:52] = True
+    assert fork_point_skeleton(m) is None
