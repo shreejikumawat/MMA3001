@@ -132,7 +132,8 @@ def main():
 
     # ---- seed aggregation and paired tests --------------------------------------
     agg = {}
-    for fam in ("rgbd", "rgb"):
+    # Seed families: v1 (class-weighted loss, raw labels), v2 (unweighted), v2r (+ refined labels).
+    for fam in ("rgbd", "rgb", "v2_rgbd", "v2r_rgbd", "v2r_rgb"):
         seeds = [n for n in tables if n.startswith(fam + "_s")]
         if seeds:
             per_seed = table.set_index("run").loc[seeds, ["cl_f1_tol4", "comp_cl_f1", "iou",
@@ -149,13 +150,18 @@ def main():
         w = stats.wilcoxon(x[ok], y[ok])
         return {"mean_diff": float(np.mean(x[ok] - y[ok])), "p": float(w.pvalue), "n": int(ok.sum())}
 
-    for a, b in (("rgbd_s0", "rgb_s0"), ("rgbd_s0", "baseline"), ("rgb_s0", "baseline")):
+    pairs = (("rgbd_s0", "rgb_s0"), ("rgbd_s0", "baseline"), ("v2_rgbd_s0", "rgbd_s0"),
+             ("v2r_rgbd_s0", "v2_rgbd_s0"), ("v2r_rgbd_s0", "rgbd_s0"),
+             ("v2r_rgbd_s0", "v2r_rgb_s0"), ("v2r_rgbd_s0", "baseline"))
+    for a, b in pairs:
         if a in tables and b in tables:
             tests[f"{a}_vs_{b}"] = {m: paired(a, b, m) for m in
                                     ("cl_f1_tol4", "comp_cl_f1", "angle_err_deg", "occ_recall")}
-    shifts = tables.get("rgbd_s0", next(iter(tables.values())))["comp_shift_px"]
+    best = "v2r_rgbd_s0" if "v2r_rgbd_s0" in tables else "rgbd_s0"
+    shifts = tables.get(best, next(iter(tables.values())))["comp_shift_px"]
     report = {"seed_aggregate": agg, "paired_tests": tests,
-              "best_shift_px_rgbd_s0": {"mean": float(shifts.mean()), "median": float(shifts.median()),
+              "final_model": best,
+              "best_shift_px_final_model": {"mean": float(shifts.mean()), "median": float(shifts.median()),
                                         "abs_median": float(shifts.abs().median()),
                                         "frac_abs_gt_4": float((shifts.abs() > 4).mean())}}
     Path("results/analysis.json").write_text(json.dumps(report, indent=2))
@@ -164,7 +170,7 @@ def main():
 
     # ---- figures -------------------------------------------------------------------
     FIG.mkdir(parents=True, exist_ok=True)
-    main_runs = [n for n in ("baseline", "rgb_s0", "rgbd_s0") if n in masks]
+    main_runs = [n for n in ("baseline", "rgbd_s0", "v2r_rgbd_s0") if n in masks]
     picks = te_idx[[0, 20, 45, 70, 90]] if len(te_idx) > 90 else te_idx[:5]
     fig, ax = plt.subplots(len(picks), 1 + len(main_runs), figsize=(2.6 * (1 + len(main_runs)), 2.6 * len(picks)))
     for r, i in enumerate(picks):
@@ -182,7 +188,7 @@ def main():
             a_.axis("off")
     fig.tight_layout(); fig.savefig(FIG / "qualitative.png", dpi=150); plt.close(fig)
 
-    hist_runs = [n for n in ("rgb_s0", "rgbd_s0") if (RUNS / n / "history.json").exists()]
+    hist_runs = [n for n in ("rgbd_s0", "v2_rgbd_s0", "v2r_rgbd_s0") if (RUNS / n / "history.json").exists()]
     if hist_runs:
         fig, ax = plt.subplots(1, 2, figsize=(8, 3))
         for n in hist_runs:
@@ -193,7 +199,7 @@ def main():
             a_.grid(alpha=.3); a_.legend(frameon=False, fontsize=8)
         fig.tight_layout(); fig.savefig(FIG / "training_curves.png", dpi=200); plt.close(fig)
 
-    sens = [(n, summaries[n]) for n in tables if n.startswith("rgbd_frac") or n == "rgbd_s0"]
+    sens = [(n, summaries[n]) for n in tables if n.startswith("v2r_rgbd_frac") or n == "v2r_rgbd_s0"]
     if len(sens) > 1:
         xs = [s["n_train"] for _, s in sens]
         fig, ax = plt.subplots(figsize=(4.5, 3))
@@ -203,7 +209,7 @@ def main():
         ax.set(xlabel="training trees", ylabel="test score"); ax.grid(alpha=.3); ax.legend(frameon=False)
         fig.tight_layout(); fig.savefig(FIG / "data_size.png", dpi=200); plt.close(fig)
 
-    tol_runs = [n for n in ("baseline", "rgb_s0", "rgbd_s0") if n in tables]
+    tol_runs = [n for n in ("baseline", "rgbd_s0", "v2r_rgbd_s0") if n in tables]
     fig, ax = plt.subplots(figsize=(4.5, 3))
     for n in tol_runs:
         ax.plot([2, 4, 8], [tables[n][f"cl_f1_tol{t}"].mean() for t in (2, 4, 8)], "o-", label=n)
