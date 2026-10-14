@@ -25,7 +25,7 @@ Two approaches are compared on orchard rows never seen in training:
 
 | Method | Centreline F1 (strict) | Shape F1 (label offset removed) | Median leader-angle error | Inference (1 CPU thread) |
 |---|---|---|---|---|
-| Classical baseline | 0.120 | 0.159 | 31.3° | 111 ms |
+| Classical baseline | 0.120 | 0.159 | 31.3° | 90 ms |
 | U-Net RGB-D, 128 px | 0.257 | 0.431 | 6.8° (seed 0) | 17 ms |
 | **U-Net RGB-D, 64 px (selected)** | **0.295** | **0.462** | **4.7°** | **8 ms** |
 
@@ -94,6 +94,7 @@ bash scripts/queue.sh                     # v1: class-weighted loss, raw labels 
 python scripts/refine_labels.py           # model-based label re-registration (needs rgbd_s0)
 bash scripts/queue_v2.sh                  # v2: unweighted loss, with and without refined labels
 bash scripts/queue_v3.sh                  # seed repeats at 64 px, RGB vs RGB-D, 256 px
+python scripts/validation_selection.py    # would validation rows alone pick the same model? (yes)
 
 # 5. Tables, statistics and figures
 python scripts/analyse.py
