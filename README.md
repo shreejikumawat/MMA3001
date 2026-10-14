@@ -141,8 +141,8 @@ print(f"leader angle {angle:.1f} deg, fork at row {info['fork_row']} of 64")
 |---|---|---|---|
 | Summer RGB | PNG, 640×480×3 uint8 | 0 to 255 per channel | wrong shape → `ValueError` |
 | Summer depth | PNG, 640×480 uint8 | relative, larger = farther, 0 = missing | missing pixels flagged in a validity channel |
-| Branch probability | float32 H×W | [0, 1] in the 480×480 centre crop resampled to H×W | — |
-| Branch mask | bool H×W | probability > validation-chosen threshold | — |
+| Branch probability | float32 H×W | [0, 1] in the 480×480 centre crop resampled to H×W | not applicable (output) |
+| Branch mask | bool H×W | probability > validation-chosen threshold | not applicable (output) |
 | Leader angle | float | degrees, opening of the V | `None` if no fork is found |
 | Fork row | int | pixel row of the fork (0 = top) | `None` if no fork is found |
 | 3-D skeleton | (K, 3) float | X, Y in relative units, Z in raw depth units (scale unknown) | pixels without depth dropped |
