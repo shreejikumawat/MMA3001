@@ -133,8 +133,10 @@ def main():
     # ---- seed aggregation and paired tests --------------------------------------
     agg = {}
     # Seed families: v1 (class-weighted loss, raw labels), v2 (unweighted), v2r (+ refined labels).
-    for fam in ("rgbd", "rgb", "v2_rgbd", "v2r_rgbd", "v2r_rgb"):
-        seeds = [n for n in tables if n.startswith(fam + "_s")]
+    families = {f: [n for n in tables if n.startswith(f + "_s")]
+                for f in ("rgbd", "rgb", "v2_rgbd", "v2r_rgbd", "v2r_rgb", "rgb_64")}
+    families["rgbd_64"] = [n for n in ("rgbd_64", "rgbd_64_s1", "rgbd_64_s2") if n in tables]
+    for fam, seeds in families.items():
         if seeds:
             per_seed = table.set_index("run").loc[seeds, ["cl_f1_tol4", "comp_cl_f1", "iou",
                                                          "angle_err_deg", "fork_err_px"]]
@@ -152,12 +154,13 @@ def main():
 
     pairs = (("rgbd_s0", "rgb_s0"), ("rgbd_s0", "baseline"), ("v2_rgbd_s0", "rgbd_s0"),
              ("v2r_rgbd_s0", "v2_rgbd_s0"), ("v2r_rgbd_s0", "rgbd_s0"),
-             ("v2r_rgbd_s0", "v2r_rgb_s0"), ("v2r_rgbd_s0", "baseline"))
+             ("v2r_rgbd_s0", "v2r_rgb_s0"), ("v2r_rgbd_s0", "baseline"),
+             ("rgbd_64", "rgbd_s0"), ("rgbd_64", "rgb_64_s0"), ("rgbd_64", "baseline"))
     for a, b in pairs:
         if a in tables and b in tables:
             tests[f"{a}_vs_{b}"] = {m: paired(a, b, m) for m in
                                     ("cl_f1_tol4", "comp_cl_f1", "angle_err_deg", "occ_recall")}
-    best = "v2r_rgbd_s0" if "v2r_rgbd_s0" in tables else "rgbd_s0"
+    best = "rgbd_64" if "rgbd_64" in tables else "rgbd_s0"
     shifts = tables.get(best, next(iter(tables.values())))["comp_shift_px"]
     report = {"seed_aggregate": agg, "paired_tests": tests,
               "final_model": best,
@@ -170,7 +173,7 @@ def main():
 
     # ---- figures -------------------------------------------------------------------
     FIG.mkdir(parents=True, exist_ok=True)
-    main_runs = [n for n in ("baseline", "rgbd_s0", "v2r_rgbd_s0") if n in masks]
+    main_runs = [n for n in ("baseline", "rgbd_s0", "v2r_rgbd_s0", "rgbd_64") if n in masks]
     picks = te_idx[[0, 20, 45, 70, 90]] if len(te_idx) > 90 else te_idx[:5]
     fig, ax = plt.subplots(len(picks), 1 + len(main_runs), figsize=(2.6 * (1 + len(main_runs)), 2.6 * len(picks)))
     for r, i in enumerate(picks):
@@ -188,6 +191,8 @@ def main():
             a_.axis("off")
     fig.tight_layout(); fig.savefig(FIG / "qualitative.png", dpi=150); plt.close(fig)
 
+    # 128-px runs only: validation clF1 uses a tolerance in training pixels, so curves at
+    # different input sizes are not comparable.
     hist_runs = [n for n in ("rgbd_s0", "v2_rgbd_s0", "v2r_rgbd_s0") if (RUNS / n / "history.json").exists()]
     if hist_runs:
         fig, ax = plt.subplots(1, 2, figsize=(8, 3))
@@ -199,7 +204,7 @@ def main():
             a_.grid(alpha=.3); a_.legend(frameon=False, fontsize=8)
         fig.tight_layout(); fig.savefig(FIG / "training_curves.png", dpi=200); plt.close(fig)
 
-    sens = [(n, summaries[n]) for n in tables if n.startswith("v2r_rgbd_frac") or n == "v2r_rgbd_s0"]
+    sens = [(n, summaries[n]) for n in tables if n.startswith("rgbd_frac") or n == "rgbd_s0"]
     if len(sens) > 1:
         xs = [s["n_train"] for _, s in sens]
         fig, ax = plt.subplots(figsize=(4.5, 3))
@@ -209,13 +214,29 @@ def main():
         ax.set(xlabel="training trees", ylabel="test score"); ax.grid(alpha=.3); ax.legend(frameon=False)
         fig.tight_layout(); fig.savefig(FIG / "data_size.png", dpi=200); plt.close(fig)
 
-    tol_runs = [n for n in ("baseline", "rgbd_s0", "v2r_rgbd_s0") if n in tables]
+    tol_runs = [n for n in ("baseline", "rgbd_s0", "rgbd_64") if n in tables]
     fig, ax = plt.subplots(figsize=(4.5, 3))
     for n in tol_runs:
         ax.plot([2, 4, 8], [tables[n][f"cl_f1_tol{t}"].mean() for t in (2, 4, 8)], "o-", label=n)
     ax.set(xlabel="matching tolerance (px)", ylabel="centreline F1"); ax.grid(alpha=.3); ax.legend(frameon=False)
     fig.tight_layout(); fig.savefig(FIG / "tolerance.png", dpi=200); plt.close(fig)
 
+    # Resolution study: mean over seeds with min-max bars (seed families from above).
+    res_fams = [(64, families.get("rgbd_64", [])), (128, families.get("rgbd", [])),
+                (256, [n for n in ("rgbd_256",) if n in tables])]
+    res_fams = [(r, f) for r, f in res_fams if f]
+    if len(res_fams) > 1:
+        fig, ax = plt.subplots(figsize=(4.5, 3))
+        for m, lab in (("cl_f1_tol4", "strict clF1"), ("comp_cl_f1", "shift-comp. clF1")):
+            mu = [np.mean([tables[n][m].mean() for n in f]) for _, f in res_fams]
+            lo = [mu[i] - min(tables[n][m].mean() for n in f) for i, (_, f) in enumerate(res_fams)]
+            hi = [max(tables[n][m].mean() for n in f) - mu[i] for i, (_, f) in enumerate(res_fams)]
+            ax.errorbar([r for r, _ in res_fams], mu, yerr=[lo, hi], fmt="o-", capsize=3, label=lab)
+        ax.set_xscale("log", base=2); ax.set_xticks([r for r, _ in res_fams])
+        ax.set_xticklabels([f"{r}\n(n={len(f)})" for r, f in res_fams])
+        ax.set(xlabel="network input size (px), n = seeds", ylabel="test score (at 256 px)")
+        ax.grid(alpha=.3); ax.legend(frameon=False)
+        fig.tight_layout(); fig.savefig(FIG / "resolution.png", dpi=200); plt.close(fig)
 
 if __name__ == "__main__":
     main()

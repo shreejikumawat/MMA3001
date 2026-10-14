@@ -11,7 +11,7 @@ Answers three questions for the report's performance section:
 
 Run *after* training, with nothing else using the CPU::
 
-    python scripts/profile_pipeline.py --model results/runs/rgbd_s0/model.pt
+    python scripts/profile_pipeline.py --model results/runs/rgbd_64/model.pt --size 64
 
 Outputs ``results/profile.json``, ``results/profile_cprofile.txt`` and
 ``results/figures/roofline.png``.
@@ -76,9 +76,10 @@ def attainable_bandwidth() -> float:
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="results/runs/rgbd_s0/model.pt")
+    ap.add_argument("--model", default="results/runs/rgbd_64/model.pt")
     ap.add_argument("--data", default="data/raw")
     ap.add_argument("--tree", default="R10N05")
+    ap.add_argument("--size", type=int, default=64, help="input size of the profiled model")
     a = ap.parse_args(argv)
     out: dict = {"platform": platform.platform(), "processor": platform.processor(),
                  "torch": torch.__version__, "cpu_threads_available": torch.get_num_threads()}
@@ -94,7 +95,7 @@ def main(argv=None):
 
     def pipeline():
         s = load_sample(rec)
-        x = make_input(s["rgb"], s["depth"], 128, near_is_bright=False)
+        x = make_input(s["rgb"], s["depth"], a.size, near_is_bright=False)
         with torch.no_grad():
             p = torch.sigmoid(model(torch.from_numpy(x)[None]))[0, 0].numpy()
         return leader_angle(p > 0.5)
@@ -112,11 +113,11 @@ def main(argv=None):
     s = load_sample(rec)
     stages = {
         "load_png": timeit(lambda: load_sample(rec), reps=10),
-        "preprocess_128": timeit(lambda: make_input(s["rgb"], s["depth"], 128, near_is_bright=False)),
+        f"preprocess_{a.size}": timeit(lambda: make_input(s["rgb"], s["depth"], a.size, near_is_bright=False)),
     }
-    x128 = make_input(s["rgb"], s["depth"], 128, near_is_bright=False)
+    x128 = make_input(s["rgb"], s["depth"], a.size, near_is_bright=False)
     with torch.no_grad():
-        stages["unet_forward_128_1thread"] = timeit(lambda: model(torch.from_numpy(x128)[None]))
+        stages[f"unet_forward_{a.size}_1thread"] = timeit(lambda: model(torch.from_numpy(x128)[None]))
         p = torch.sigmoid(model(torch.from_numpy(x128)[None]))[0, 0].numpy()
     stages["structure_extraction"] = timeit(lambda: leader_angle(p > 0.5), reps=10)
     out["stage_seconds"] = stages
@@ -164,7 +165,7 @@ def main(argv=None):
         model(torch.from_numpy(x128)[None])
     for h in hooks:
         h.remove()
-    out["unet_activation_MB_128"] = sum(acts) / 1e6
+    out[f"unet_activation_MB_{a.size}"] = sum(acts) / 1e6
     Path("results/profile.json").write_text(json.dumps(out, indent=2))
 
     # ---- roofline figure ---------------------------------------------------------
