@@ -1,0 +1,33 @@
+         9901 function calls (8741 primitive calls) in 0.257 seconds
+
+   Ordered by: cumulative time
+   List reduced from 169 to 25 due to restriction <25>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       10    0.001    0.000    0.257    0.026 /home/claude/mma3001-treeid/scripts/profile_pipeline.py:96(pipeline)
+       10    0.000    0.000    0.153    0.015 /home/claude/mma3001-treeid/src/treeid/io.py:154(load_sample)
+       30    0.151    0.005    0.151    0.005 {imread}
+       10    0.000    0.000    0.108    0.011 /home/claude/mma3001-treeid/src/treeid/io.py:125(read_rgb)
+   570/10    0.001    0.000    0.073    0.007 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py:1779(_wrapped_call_impl)
+   570/10    0.002    0.000    0.073    0.007 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/module.py:1787(_call_impl)
+       10    0.001    0.000    0.073    0.007 /home/claude/mma3001-treeid/src/treeid/model.py:58(forward)
+       70    0.001    0.000    0.055    0.001 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/container.py:254(forward)
+       20    0.000    0.000    0.045    0.002 /home/claude/mma3001-treeid/src/treeid/io.py:137(read_gray)
+      150    0.000    0.000    0.044    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py:564(forward)
+      150    0.000    0.000    0.043    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py:546(_conv_forward)
+      150    0.043    0.000    0.043    0.000 {built-in method torch.conv2d}
+       10    0.001    0.000    0.015    0.001 /home/claude/mma3001-treeid/src/treeid/skeleton.py:91(leader_angle)
+       10    0.001    0.000    0.013    0.001 /home/claude/mma3001-treeid/src/treeid/preprocess.py:106(make_input)
+       20    0.000    0.000    0.009    0.000 /home/claude/mma3001-treeid/src/treeid/preprocess.py:24(crop_resize)
+       30    0.000    0.000    0.007    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/conv.py:1169(forward)
+       20    0.007    0.000    0.007    0.000 {resize}
+       10    0.001    0.000    0.007    0.001 /home/claude/mma3001-treeid/src/treeid/skeleton.py:59(fork_point_skeleton)
+       30    0.007    0.000    0.007    0.000 {built-in method torch.conv_transpose2d}
+      140    0.001    0.000    0.007    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/batchnorm.py:176(forward)
+       30    0.000    0.000    0.007    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/modules/pooling.py:222(forward)
+       30    0.000    0.000    0.006    0.000 /usr/local/lib/python3.13/dist-packages/torch/_jit_internal.py:627(fn)
+       30    0.000    0.000    0.006    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/functional.py:814(_max_pool2d)
+       30    0.006    0.000    0.006    0.000 {built-in method torch.max_pool2d}
+      140    0.001    0.000    0.005    0.000 /usr/local/lib/python3.13/dist-packages/torch/nn/functional.py:2865(batch_norm)
+
+

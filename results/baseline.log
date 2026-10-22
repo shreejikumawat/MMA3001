@@ -1,0 +1,22 @@
+/home/claude/mma3001-treeid/src/treeid/baseline.py:89: FutureWarning: Parameter `min_size` is deprecated since version 0.26.0 and will be removed in 2.0.0 (or later). To avoid this warning, please use the parameter `max_size` instead. For more details, see the documentation of `remove_small_objects`. Note that the new threshold removes objects smaller than **or equal to** its value, while the previous parameter only removed smaller ones.
+  mask = remove_small_objects(mask, min_size=params.min_size)
+{
+ "params": {
+  "w_ridge": 1.0,
+  "w_near": 0.0,
+  "thresh": 0.4,
+  "min_size": 0
+ },
+ "tune_seconds": 271.3266935439997,
+ "n_tune": 199,
+ "infer_seconds_per_image": 0.16668083567006742,
+ "test_mean": {
+  "iou": 0.05545047946911899,
+  "dice": 0.10450525488047989,
+  "bf1": 0.20791796425855635,
+  "cl_precision": 0.06640310397351158,
+  "cl_recall": 0.6292997905653641,
+  "cl_f1": 0.11964953469721513,
+  "occ_recall": 0.5414179223294661
+ }
+}

@@ -1,0 +1,10 @@
+,val_strict_cl_f1,val_strict_cl_f1,val_strict_cl_f1,val_comp_cl_f1,val_comp_cl_f1,val_comp_cl_f1
+,mean,std,count,mean,std,count
+family,,,,,,
+v1 RGB 128 px,0.2441,0.0088,3,0.4074,0.017,3
+v1 RGB 64 px,0.2453,0.0088,3,0.4222,0.018,3
+v1 RGB-D 128 px,0.2499,0.0086,3,0.4325,0.0329,3
+v1 RGB-D 256 px,0.1906,,1,0.3701,,1
+v1 RGB-D 64 px,0.2901,0.0084,3,0.4573,0.0056,3
+v2 RGB-D 128 px,0.2121,0.0426,3,0.3637,0.0406,3
+v2r RGB-D 128 px,0.2434,0.0094,3,0.4723,0.0099,3
