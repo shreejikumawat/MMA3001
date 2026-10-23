@@ -21,3 +21,6 @@ results/runs/*/test_prob.npz
 !results/runs/v2r_rgbd_s0/test_prob.npz
 !results/runs/rgb_64_s0/model.pt
 !results/runs/rgb_64_s0/test_prob.npz
+
+# Empty stderr captures from the training queue
+results/**/err_*.txt
