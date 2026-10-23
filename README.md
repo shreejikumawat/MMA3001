@@ -7,7 +7,7 @@ Shreeji Kumawat (37573578).
 
 A pruning robot needs to know where the trunk and main branches of a tree are but in summer a lot of it is hidden behind leaves. This project takes one summer colour and depth photo of an apple tree and finds the trunk and the two main branches even where leaves cover them. It then works out the height where the trunk splits and the angle between the two branches.
 
-Two methods are compared. The first is a simple rule based method and the second is a small U-Net. The U-Net using 64 px images did the best and was picked as the final model. The full details are in the report (`doc/report.pdf`).
+Two methods are compared. The first is a simple rule based method and the second is a small U-Net. The U-Net using 64 px images did the best and was picked as the final model. The full details are in the report (`doc/Report.pdf`).
 
 ## Folders
 
@@ -85,7 +85,7 @@ There is 53 tests and they all pass. The latest results are saved in `doc/test_r
 
 ## AI use
 
-AI was used in this project and it is explained in the report and in `doc/AI_USE_LOG.md`.
+AI was used in this project and it is explained in the report and in `doc/ai_use_log.md`.
 
 ## Licence and data
 
