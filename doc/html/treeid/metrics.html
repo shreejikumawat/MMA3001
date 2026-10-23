@@ -71,10 +71,10 @@
 
 <p>Pixel-overlap scores (IoU, Dice) under-reward thin structures because a one-pixel
 offset along a branch only a few pixels wide destroys most of the overlap. The
-module therefore also provides tolerance-based scores that ask the question an
-orchard robot actually cares about: <em>is there predicted branch within <code>tol</code>
-pixels of every true branch, and is every predicted branch within <code>tol</code> pixels
-of a true branch?</em></p>
+module also has tolerance-based scores: a true centreline pixel counts as found
+if a predicted centreline pixel is within <code>tol</code> pixels of it, and the same the
+other way round for precision. This is closer to what matters for a pruning
+robot than exact pixel overlap.</p>
 
 <p>All functions take boolean arrays of identical shape and return Python floats.
 Empty-set conventions are documented per function so that results are never
@@ -89,10 +89,10 @@ Empty-set conventions are documented per function so that results are never
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Pixel-overlap scores (IoU, Dice) under-reward thin structures because a one-pixel</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">offset along a branch only a few pixels wide destroys most of the overlap. The</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">module therefore also provides tolerance-based scores that ask the question an</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">orchard robot actually cares about: *is there predicted branch within ``tol``</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">pixels of every true branch, and is every predicted branch within ``tol`` pixels</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">of a true branch?*</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">module also has tolerance-based scores: a true centreline pixel counts as found</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">if a predicted centreline pixel is within ``tol`` pixels of it, and the same the</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">other way round for precision. This is closer to what matters for a pruning</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">robot than exact pixel overlap.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">All functions take boolean arrays of identical shape and return Python floats.</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">Empty-set conventions are documented per function so that results are never</span>

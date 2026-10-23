@@ -43,7 +43,7 @@ results, limitations and the AI-use reflection.
 ├── LICENSE              MIT (code only; the dataset is not covered)
 ├── requirements.txt     pinned minimum versions
 ├── pyproject.toml       package metadata and pytest configuration
-├── src/treeid/          the library (documented with NumPy-style docstrings)
+├── src/treeid/          the library (Google-style docstrings)
 │   ├── io.py            dataset discovery, filename parsing, loading
 │   ├── preprocess.py    crop/resample, excess-green, depth normalisation, network input
 │   ├── align.py         FFT cross-correlation registration (sub-pixel)
