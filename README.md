@@ -25,9 +25,9 @@ Two approaches are compared on orchard rows never seen in training:
 
 | Method | Centreline F1 (strict) | Shape F1 (label offset removed) | Median leader-angle error | Inference (1 CPU thread) |
 |---|---|---|---|---|
-| Classical baseline | 0.120 | 0.159 | 31.3° | 90 ms |
-| U-Net RGB-D, 128 px | 0.257 | 0.431 | 6.8° (seed 0) | 17 ms |
-| **U-Net RGB-D, 64 px (selected)** | **0.295** | **0.462** | **4.7°** | **8 ms** |
+| Classical baseline | 0.120 | 0.159 | 31.3° | 65 ms |
+| U-Net RGB-D, 128 px | 0.257 | 0.431 | 6.8° (seed 0) | 19 ms |
+| **U-Net RGB-D, 64 px (selected)** | **0.295** | **0.462** | **4.7°** | **6 ms** |
 
 Strict scores are capped by a dataset problem found in the audit: the supplied
 masks are displaced horizontally from the visible tree (median ≈ 10 px at 256 px).
@@ -63,8 +63,8 @@ results, limitations and the AI-use reflection.
 
 ## Environment
 
-Python ≥ 3.10. CPU is sufficient (all reported results were produced on a 2-core
-CPU); a GPU (e.g. free Google Colab) speeds up training ~20×.
+Python ≥ 3.10. CPU is sufficient (training runs were done on a 2-core CPU; the timings
+in the table are from my laptop, 1 thread); a GPU (e.g. free Google Colab) speeds up training ~20×.
 
 ```bash
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
