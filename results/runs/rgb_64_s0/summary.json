@@ -1,0 +1,35 @@
+{
+  "args": {
+    "name": "rgb_64_s0",
+    "size": 64,
+    "depth_input": false,
+    "seed": 0,
+    "train_frac": 1.0,
+    "labels": null,
+    "max_epochs": 40,
+    "patience": 8,
+    "base": 16,
+    "pos_weight": null
+  },
+  "n_train": 398,
+  "n_val": 67,
+  "n_test": 97,
+  "threshold": 0.5499999999999999,
+  "best_epoch": 5,
+  "epochs_run": 14,
+  "train_seconds": 66.16825226200035,
+  "infer_seconds_per_image_1thread": 0.007303145989690446,
+  "flops": 289931264.0,
+  "bytes": 6823680.0,
+  "arith_intensity": 42.48898893265804,
+  "params": 482737,
+  "test_mean": {
+    "iou": 0.20602165264757294,
+    "dice": 0.33976296350872864,
+    "bf1": 0.19914028540672238,
+    "cl_precision": 0.2303044879879562,
+    "cl_recall": 0.22810936680612537,
+    "cl_f1": 0.22895685106761549,
+    "occ_recall": 0.9019415070290634
+  }
+}

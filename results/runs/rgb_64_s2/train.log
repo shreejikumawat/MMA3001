@@ -1,0 +1,17 @@
+epoch   0 loss 1.7237 val clF1 0.3901
+epoch   1 loss 1.5262 val clF1 0.4438
+epoch   2 loss 1.4840 val clF1 0.3925
+epoch   3 loss 1.4582 val clF1 0.4801
+epoch   4 loss 1.4427 val clF1 0.3873
+epoch   5 loss 1.4263 val clF1 0.4065
+epoch   6 loss 1.4225 val clF1 0.4288
+epoch   7 loss 1.4128 val clF1 0.4859
+epoch   8 loss 1.3933 val clF1 0.4937
+epoch   9 loss 1.3895 val clF1 0.4048
+epoch  10 loss 1.3865 val clF1 0.4693
+epoch  11 loss 1.3691 val clF1 0.4569
+epoch  12 loss 1.3349 val clF1 0.4836
+epoch  13 loss 1.3281 val clF1 0.4902
+epoch  14 loss 1.2990 val clF1 0.4776
+epoch  15 loss 1.2998 val clF1 0.4804
+epoch  16 loss 1.2619 val clF1 0.4929
