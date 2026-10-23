@@ -5,9 +5,9 @@
     "thresh": 0.4,
     "min_size": 0
   },
-  "tune_seconds": 271.3266935439997,
+  "tune_seconds": 119.0852841999149,
   "n_tune": 199,
-  "infer_seconds_per_image": 0.16668083567006742,
+  "infer_seconds_per_image": 0.06471455052312579,
   "test_mean": {
     "iou": 0.05545047946911899,
     "dice": 0.10450525488047989,

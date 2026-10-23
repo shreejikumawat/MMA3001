@@ -1,26 +1,26 @@
 {
-  "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
-  "processor": "x86_64",
-  "torch": "2.14.1+cu130",
-  "cpu_threads_available": 2,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+  "torch": "2.14.1+cpu",
+  "cpu_threads_available": 10,
   "stage_seconds": {
-    "load_png": 0.014992733500548638,
-    "preprocess_64": 0.0009589740002411418,
-    "unet_forward_64_1thread": 0.007933784499982721,
-    "structure_extraction": 0.0006694840003547142
+    "load_png": 0.009288450004532933,
+    "preprocess_64": 0.0006081500905565917,
+    "unet_forward_64_1thread": 0.005956399952992797,
+    "structure_extraction": 0.0005644499906338751
   },
   "attainable_gflops": {
-    "1": 141.34764324410807,
-    "2": 288.33649492821377
+    "1": 111.44383229325581,
+    "2": 226.42391433166716
   },
-  "attainable_bandwidth_GBs": 15.548694175629677,
+  "attainable_bandwidth_GBs": 23.257436574927315,
   "scaling": [
     {
       "size": 64,
       "threads": 1,
-      "seconds": 0.005053248999502102,
-      "gflops_achieved": 57.84210515428776,
-      "frac_of_peak": 0.4092187448388804,
+      "seconds": 0.005829300032928586,
+      "gflops_achieved": 50.14162221002647,
+      "frac_of_peak": 0.4499272968115694,
       "flops": 292290560.0,
       "bytes": 6857600.0,
       "arith_intensity": 42.622865142323846,
@@ -29,9 +29,9 @@
     {
       "size": 64,
       "threads": 2,
-      "seconds": 0.00487570100085577,
-      "gflops_achieved": 59.94841766316227,
-      "frac_of_peak": 0.2079113075092608,
+      "seconds": 0.004418399999849498,
+      "gflops_achieved": 66.15303277429751,
+      "frac_of_peak": 0.2921645134947899,
       "flops": 292290560.0,
       "bytes": 6857600.0,
       "arith_intensity": 42.622865142323846,
@@ -40,9 +40,9 @@
     {
       "size": 128,
       "threads": 1,
-      "seconds": 0.017392453500178817,
-      "gflops_achieved": 67.22238699606008,
-      "frac_of_peak": 0.4755819442986162,
+      "seconds": 0.01915740000549704,
+      "gflops_achieved": 61.02927535388517,
+      "frac_of_peak": 0.547623624367936,
       "flops": 1169162240.0,
       "bytes": 21652352.0,
       "arith_intensity": 53.99700873143019,
@@ -51,9 +51,9 @@
     {
       "size": 128,
       "threads": 2,
-      "seconds": 0.010995884999829286,
-      "gflops_achieved": 106.32725242380687,
-      "frac_of_peak": 0.3687609938182776,
+      "seconds": 0.01141815003938973,
+      "gflops_achieved": 102.39506714894146,
+      "frac_of_peak": 0.45222726341066843,
       "flops": 1169162240.0,
       "bytes": 21652352.0,
       "arith_intensity": 53.99700873143019,
@@ -62,9 +62,9 @@
     {
       "size": 256,
       "threads": 1,
-      "seconds": 0.07653256750018045,
-      "gflops_achieved": 61.10665188370916,
-      "frac_of_peak": 0.4323146143878584,
+      "seconds": 0.07145129999844357,
+      "gflops_achieved": 65.45225853276108,
+      "frac_of_peak": 0.5873116276235775,
       "flops": 4676648960.0,
       "bytes": 80831360.0,
       "arith_intensity": 57.856863474770186,
@@ -73,17 +73,17 @@
     {
       "size": 256,
       "threads": 2,
-      "seconds": 0.03768717299954005,
-      "gflops_achieved": 124.09126468724718,
-      "frac_of_peak": 0.43036960936263646,
+      "seconds": 0.03713329997844994,
+      "gflops_achieved": 125.94218565853456,
+      "frac_of_peak": 0.5562229856783311,
       "flops": 4676648960.0,
       "bytes": 80831360.0,
       "arith_intensity": 57.856863474770186,
       "params": 483025
     }
   ],
-  "baseline_seconds_256": 0.0903988730005949,
-  "baseline_peak_python_MB": 3.672606,
+  "baseline_seconds_256": 0.06449255003826693,
+  "baseline_peak_python_MB": 3.672806,
   "unet_weights_MB": 1.9321,
   "unet_activation_MB_64": 1.916928
 }
