@@ -1,0 +1,23 @@
+{
+  "gt_err": {
+    "median_px": 17.5,
+    "mean_px": 18.361842105263158,
+    "frac_within_5px": 0.15789473684210525
+  },
+  "rgbd_s0_err": {
+    "median_px": 9.5,
+    "mean_px": 11.848684210526315,
+    "frac_within_5px": 0.25
+  },
+  "v2r_rgbd_s0_err": {
+    "median_px": 3.0,
+    "mean_px": 4.760273972602739,
+    "frac_within_5px": 0.6842105263157895
+  },
+  "rgbd_64_err": {
+    "median_px": 14.0,
+    "mean_px": 17.480263157894736,
+    "frac_within_5px": 0.14473684210526316
+  },
+  "n_annotated_visible": 76
+}
