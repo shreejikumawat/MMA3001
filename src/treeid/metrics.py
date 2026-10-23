@@ -2,10 +2,10 @@
 
 Pixel-overlap scores (IoU, Dice) under-reward thin structures because a one-pixel
 offset along a branch only a few pixels wide destroys most of the overlap. The
-module therefore also provides tolerance-based scores that ask the question an
-orchard robot actually cares about: *is there predicted branch within ``tol``
-pixels of every true branch, and is every predicted branch within ``tol`` pixels
-of a true branch?*
+module also has tolerance-based scores: a true centreline pixel counts as found
+if a predicted centreline pixel is within ``tol`` pixels of it, and the same the
+other way round for precision. This is closer to what matters for a pruning
+robot than exact pixel overlap.
 
 All functions take boolean arrays of identical shape and return Python floats.
 Empty-set conventions are documented per function so that results are never
