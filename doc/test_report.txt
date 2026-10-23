@@ -1,10 +1,10 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
+platform linux -- Python 3.13.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/bin/python3
 cachedir: .pytest_cache
-rootdir: /home/claude/mma3001-treeid
+rootdir: /work/MMA3001
 configfile: pyproject.toml
 testpaths: tests
-plugins: anyio-4.15.1
+plugins: platformdirs-4.12.4, anyio-4.15.1
 collecting ... collected 53 items
 
 tests/test_align.py::test_xcorr_matches_direct_sum PASSED                [  1%]
@@ -61,5 +61,5 @@ tests/test_skeleton.py::test_backproject_skips_missing_depth PASSED      [ 96%]
 tests/test_skeleton.py::test_skeleton_fork_is_less_width_biased_than_run_rule PASSED [ 98%]
 tests/test_skeleton.py::test_skeleton_fork_none_for_straight_trunk PASSED [100%]
 
------ generated xml file: /home/claude/mma3001-treeid/doc/test_report.xml ------
-============================== 53 passed in 6.12s ==============================
+------------ generated xml file: /work/MMA3001/doc/test_report.xml -------------
+============================== 53 passed in 6.44s ==============================
